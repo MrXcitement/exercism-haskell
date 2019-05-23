@@ -1,26 +1,34 @@
-username ?= mrbarker
-imagename ?= exercism-haskell
-tag ?= 0.1.1
+# Makefile
+# Provide a standard interface for working with the exercism docker container.
+# Mike Barker <mike@thebarkers.com>
+# May 22nd, 2019
 
-all: run
+service ?= exercism
 
-docker-run:
+.PHONY: all up down shell start stop kill rm
+all: up
+
+up:
 	mkdir -p $(CURDIR)/.config/exercism
-	docker run \
-		-dit \
-		-v $(CURDIR)/.config/exercism:/root/.config/exercism \
-		-v $(CURDIR):/root/exercism \
-		--name $(imagename) \
-		$(username)/$(imagename):$(tag)
+	docker-compose up -d
 
-docker-exec:
-	docker exec -it $(imagename) bash --login
+down:
+	docker-compose down
 
-docker-stop:
-	docker stop $(imagename)
+ps:
+	docker-compose ps
 
-docker-kill:
-	docker kill $(imagename)
+shell:
+	docker-compose exec $(service) bash --login
 
-docker-rm:
-	docker rm $(imagename)
+start:
+	docker-compose start
+
+stop:
+	docker-compose stop
+
+kill:
+	docker-compose kill
+
+rm:
+	docker-compose rm
